@@ -4,12 +4,18 @@ A small Windows desktop app to turn your system proxy on/off and check your publ
 
 ## What it does
 
-- **Proxy Configuration**: enter a proxy address and port, then **Connect** to apply it
-  as your Windows system proxy (per-user, no admin rights needed), or **Disconnect** to
-  turn it off. A status line shows what's currently active.
+- **Proxy Configuration**: enter a proxy address and port, then hit the single
+  **Connect / Disconnect** toggle to apply or remove it as your Windows system proxy
+  (per-user, no admin rights needed). A status line shows what's currently active.
+  The address and port you last used are remembered and pre-filled the next time you
+  open the app.
 - **IP Check**: click **Check My IP** to query `https://api.myip.com` and show your
-  current public IP and country. Since it uses the system proxy, this doubles as a way
-  to confirm the proxy is actually being used.
+  current public IP (bold) and country on one line, below a divider. Since it uses the
+  system proxy, this doubles as a way to confirm the proxy is actually being used.
+
+## UI
+
+White background, `#0E0E10` Segoe UI text, flat 16px-rounded buttons.
 
 ## Getting the .exe
 
@@ -39,3 +45,7 @@ The resulting `publish/ProxySettler.exe` is standalone.
   Firefox) are not affected.
 - No credentials/auth or bypass list support — this targets a plain `host:port` HTTP
   proxy, kept intentionally simple.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

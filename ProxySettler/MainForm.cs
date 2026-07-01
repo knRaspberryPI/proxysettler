@@ -8,13 +8,18 @@ public class MainForm : Form
     private static readonly HttpClient HttpClient = new();
     private const string IpCheckUrl = "https://api.myip.com";
 
+    private static readonly Color TextColor = ColorTranslator.FromHtml("#0E0E10");
+    private static readonly Color SubtleColor = Color.FromArgb(255, 120, 120, 124);
+    private static readonly Color ActiveColor = Color.FromArgb(255, 20, 130, 70);
+    private static readonly Color InactiveColor = Color.FromArgb(255, 176, 45, 45);
+    private static readonly Color DividerColor = Color.FromArgb(255, 229, 229, 231);
+
     private readonly TextBox _txtProxy;
     private readonly NumericUpDown _numPort;
-    private readonly Button _btnConnect;
-    private readonly Button _btnDisconnect;
+    private readonly RoundedButton _btnToggle;
     private readonly Label _lblStatus;
 
-    private readonly Button _btnCheckIp;
+    private readonly RoundedButton _btnCheckIp;
     private readonly Label _lblIpValue;
     private readonly Label _lblCountryValue;
     private readonly Label _lblIpError;
@@ -22,73 +27,66 @@ public class MainForm : Form
     public MainForm()
     {
         Text = "Proxy Settler";
-        ClientSize = new Size(450, 360);
+        ClientSize = new Size(420, 400);
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
         StartPosition = FormStartPosition.CenterScreen;
+        BackColor = Color.White;
+        ForeColor = TextColor;
+        Font = new Font("Segoe UI", 9.5f);
 
-        var grpProxy = new GroupBox
-        {
-            Text = "Proxy Configuration",
-            Left = 15,
-            Top = 15,
-            Width = 420,
-            Height = 175
-        };
+        var lblProxyCaption = new Label { Text = "PROXY ADDRESS", Left = 24, Top = 24, Width = 220, ForeColor = SubtleColor, Font = new Font("Segoe UI", 8f) };
+        _txtProxy = new TextBox { Left = 24, Top = 44, Width = 220, Font = new Font("Segoe UI", 10f), PlaceholderText = "e.g. 127.0.0.1" };
 
-        var lblProxy = new Label { Text = "Proxy address:", Left = 15, Top = 32, Width = 100 };
-        _txtProxy = new TextBox { Left = 120, Top = 28, Width = 280, PlaceholderText = "e.g. 127.0.0.1" };
+        var lblPortCaption = new Label { Text = "PORT", Left = 260, Top = 24, Width = 136, ForeColor = SubtleColor, Font = new Font("Segoe UI", 8f) };
+        _numPort = new NumericUpDown { Left = 260, Top = 44, Width = 136, Minimum = 1, Maximum = 65535, Value = 8080, Font = new Font("Segoe UI", 10f) };
 
-        var lblPort = new Label { Text = "Port:", Left = 15, Top = 67, Width = 100 };
-        _numPort = new NumericUpDown { Left = 120, Top = 63, Width = 100, Minimum = 1, Maximum = 65535, Value = 8080 };
-
-        _btnConnect = new Button { Text = "Connect", Left = 120, Top = 100, Width = 130, Height = 32 };
-        _btnConnect.Click += BtnConnect_Click;
-
-        _btnDisconnect = new Button { Text = "Disconnect", Left = 260, Top = 100, Width = 140, Height = 32 };
-        _btnDisconnect.Click += BtnDisconnect_Click;
+        _btnToggle = new RoundedButton { Text = "Connect", Left = 24, Top = 84, Width = 372, Height = 44 };
+        _btnToggle.Click += BtnToggle_Click;
 
         _lblStatus = new Label
         {
-            Text = "Status: unknown",
-            Left = 15,
-            Top = 145,
-            Width = 390,
-            Font = new Font(Font, FontStyle.Bold)
+            Text = "Inactive",
+            Left = 24,
+            Top = 140,
+            Width = 372,
+            Height = 20,
+            TextAlign = ContentAlignment.MiddleCenter,
+            ForeColor = InactiveColor,
+            Font = new Font("Segoe UI", 9.5f, FontStyle.Bold)
         };
 
-        grpProxy.Controls.AddRange(new Control[]
-        {
-            lblProxy, _txtProxy, lblPort, _numPort, _btnConnect, _btnDisconnect, _lblStatus
-        });
+        var divider = new Panel { Left = 24, Top = 176, Width = 372, Height = 1, BackColor = DividerColor };
 
-        var grpIp = new GroupBox
-        {
-            Text = "IP Check",
-            Left = 15,
-            Top = 200,
-            Width = 420,
-            Height = 145
-        };
-
-        _btnCheckIp = new Button { Text = "Check My IP", Left = 15, Top = 28, Width = 140, Height = 32 };
+        _btnCheckIp = new RoundedButton { Text = "Check My IP", Left = 24, Top = 196, Width = 160, Height = 38 };
         _btnCheckIp.Click += BtnCheckIp_Click;
 
-        var lblIpCaption = new Label { Text = "Public IP:", Left = 15, Top = 75, Width = 90 };
-        _lblIpValue = new Label { Text = "-", Left = 110, Top = 75, Width = 290, Font = new Font(Font, FontStyle.Bold) };
-
-        var lblCountryCaption = new Label { Text = "Country:", Left = 15, Top = 100, Width = 90 };
-        _lblCountryValue = new Label { Text = "-", Left = 110, Top = 100, Width = 290 };
-
-        _lblIpError = new Label { Text = "", Left = 15, Top = 122, Width = 390, ForeColor = Color.Firebrick };
-
-        grpIp.Controls.AddRange(new Control[]
+        _lblIpValue = new Label
         {
-            _btnCheckIp, lblIpCaption, _lblIpValue, lblCountryCaption, _lblCountryValue, _lblIpError
-        });
+            Text = "",
+            Left = 24,
+            Top = 248,
+            Height = 22,
+            AutoSize = true,
+            Font = new Font("Segoe UI", 10.5f, FontStyle.Bold)
+        };
 
-        Controls.Add(grpProxy);
-        Controls.Add(grpIp);
+        _lblCountryValue = new Label
+        {
+            Text = "",
+            Top = 248,
+            Height = 22,
+            AutoSize = true,
+            Font = new Font("Segoe UI", 10.5f)
+        };
+
+        _lblIpError = new Label { Text = "", Left = 24, Top = 274, Width = 372, ForeColor = InactiveColor, Font = new Font("Segoe UI", 8.5f) };
+
+        Controls.AddRange(new Control[]
+        {
+            lblProxyCaption, _txtProxy, lblPortCaption, _numPort, _btnToggle, _lblStatus,
+            divider, _btnCheckIp, _lblIpValue, _lblCountryValue, _lblIpError
+        });
 
         RefreshStatus();
     }
@@ -97,11 +95,10 @@ public class MainForm : Form
     {
         var (enabled, server) = ProxyManager.GetStatus();
 
-        if (enabled && !string.IsNullOrWhiteSpace(server))
+        // The registry keeps the last-used ProxyServer value even after disconnecting,
+        // so this doubles as "remember what I typed last time".
+        if (!string.IsNullOrWhiteSpace(server))
         {
-            _lblStatus.Text = $"Status: Active ({server})";
-            _lblStatus.ForeColor = Color.DarkGreen;
-
             var parts = server.Split(':');
             if (parts.Length == 2 && int.TryParse(parts[1], out var parsedPort))
             {
@@ -109,15 +106,41 @@ public class MainForm : Form
                 _numPort.Value = Math.Clamp(parsedPort, (int)_numPort.Minimum, (int)_numPort.Maximum);
             }
         }
+
+        if (enabled)
+        {
+            _lblStatus.Text = $"Active — {server}";
+            _lblStatus.ForeColor = ActiveColor;
+            _btnToggle.Text = "Disconnect";
+        }
         else
         {
-            _lblStatus.Text = "Status: Inactive";
-            _lblStatus.ForeColor = Color.Firebrick;
+            _lblStatus.Text = "Inactive";
+            _lblStatus.ForeColor = InactiveColor;
+            _btnToggle.Text = "Connect";
         }
     }
 
-    private void BtnConnect_Click(object? sender, EventArgs e)
+    private void BtnToggle_Click(object? sender, EventArgs e)
     {
+        var (enabled, _) = ProxyManager.GetStatus();
+
+        if (enabled)
+        {
+            try
+            {
+                ProxyManager.Disconnect();
+                RefreshStatus();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Failed to disable the proxy: {ex.Message}", "Proxy Settler",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            return;
+        }
+
         var proxy = _txtProxy.Text.Trim();
         if (string.IsNullOrEmpty(proxy))
         {
@@ -138,26 +161,12 @@ public class MainForm : Form
         }
     }
 
-    private void BtnDisconnect_Click(object? sender, EventArgs e)
-    {
-        try
-        {
-            ProxyManager.Disconnect();
-            RefreshStatus();
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(this, $"Failed to disable the proxy: {ex.Message}", "Proxy Settler",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-    }
-
     private async void BtnCheckIp_Click(object? sender, EventArgs e)
     {
         _btnCheckIp.Enabled = false;
         _lblIpError.Text = "";
         _lblIpValue.Text = "Checking...";
-        _lblCountryValue.Text = "-";
+        _lblCountryValue.Text = "";
 
         try
         {
@@ -168,26 +177,19 @@ public class MainForm : Form
             var info = JsonSerializer.Deserialize<IpInfo>(json);
 
             _lblIpValue.Text = string.IsNullOrEmpty(info?.Ip) ? "N/A" : info.Ip;
-
-            if (!string.IsNullOrEmpty(info?.Country))
-            {
-                _lblCountryValue.Text = string.IsNullOrEmpty(info.CountryCode)
-                    ? info.Country
-                    : $"{info.Country} ({info.CountryCode})";
-            }
-            else
-            {
-                _lblCountryValue.Text = "N/A";
-            }
+            _lblCountryValue.Text = !string.IsNullOrEmpty(info?.Country)
+                ? string.IsNullOrEmpty(info.CountryCode) ? $" ({info.Country})" : $" ({info.Country}, {info.CountryCode})"
+                : "";
         }
         catch (Exception ex)
         {
-            _lblIpValue.Text = "-";
-            _lblCountryValue.Text = "-";
+            _lblIpValue.Text = "";
+            _lblCountryValue.Text = "";
             _lblIpError.Text = $"Error: {ex.Message}";
         }
         finally
         {
+            _lblCountryValue.Left = _lblIpValue.Right;
             _btnCheckIp.Enabled = true;
         }
     }
