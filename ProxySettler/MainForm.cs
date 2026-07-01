@@ -6,7 +6,7 @@ namespace ProxySettler;
 
 public class MainForm : Form
 {
-    private static readonly HttpClient HttpClient = new();
+    private static readonly HttpClient HttpClient = CreateHttpClient();
     private const string IpCheckUrl = "https://api.myip.com";
 
     private static readonly Color TextColor = ColorTranslator.FromHtml("#0E0E10");
@@ -155,6 +155,15 @@ public class MainForm : Form
         RefreshStatus();
     }
 
+    private static HttpClient CreateHttpClient()
+    {
+        var client = new HttpClient();
+        // Some APIs (this one included) reject requests with no User-Agent header.
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("ProxySettler/1.0");
+        client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+        return client;
+    }
+
     private static Image? LoadEmbeddedIcon()
     {
         var assembly = Assembly.GetExecutingAssembly();
@@ -260,7 +269,10 @@ public class MainForm : Form
         try
         {
             using var response = await HttpClient.GetAsync(IpCheckUrl);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"{(int)response.StatusCode} {response.ReasonPhrase}");
+            }
 
             var json = await response.Content.ReadAsStringAsync();
             var info = JsonSerializer.Deserialize<IpInfo>(json);

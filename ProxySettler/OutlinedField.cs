@@ -19,14 +19,16 @@ internal sealed class OutlinedField : Panel
     {
         DoubleBuffered = true;
         BackColor = Color.White;
+        // Inset docked children by 2px so they don't paint over the border drawn at the panel's edge.
+        Padding = new Padding(2);
         SetStyle(ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
 
         var lblCaption = new Label
         {
             Text = caption,
             Dock = DockStyle.Top,
-            Height = 22,
-            Padding = new Padding(14, 8, 0, 0),
+            Height = 20,
+            Padding = new Padding(12, 6, 0, 0),
             Font = new Font("Segoe UI", 8.5f),
             ForeColor = CaptionColor,
         };
@@ -54,7 +56,7 @@ internal sealed class OutlinedField : Panel
         var textHost = new Panel
         {
             Dock = DockStyle.Fill,
-            Padding = new Padding(14, 0, 14, 8),
+            Padding = new Padding(12, 0, 12, 8),
             BackColor = Color.White,
         };
         textHost.Controls.Add(TextBox);
