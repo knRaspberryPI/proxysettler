@@ -9,13 +9,15 @@ A small Windows desktop app to turn your system proxy on/off and check your publ
   (per-user, no admin rights needed). A status line shows what's currently active.
   The address and port you last used are remembered and pre-filled the next time you
   open the app.
-- **IP Check**: click **Check My IP** to query `https://api.myip.com` and show your
-  current public IP (bold) and country on one line, below a divider. Since it uses the
-  system proxy, this doubles as a way to confirm the proxy is actually being used.
+- **IP Check**: click the **Check my IP** link to query `https://api.myip.com` and show
+  your current public IP (bold) and country on one line, below a divider. Since it uses
+  the system proxy, this doubles as a way to confirm the proxy is actually being used.
 
 ## UI
 
-White background, `#0E0E10` Segoe UI text, flat 16px-rounded buttons.
+White background, `#0E0E10` Segoe UI text, rounded outlined input fields with floating
+labels, and a solid blue "Connect" button that turns into a white outlined "Disconnect"
+once active.
 
 ## Getting the .exe
 
