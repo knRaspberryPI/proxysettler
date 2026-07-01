@@ -15,4 +15,8 @@
     <ApplicationIcon>Assets\ProxySettler.ico</ApplicationIcon>
   </PropertyGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\appicon.png" />
+  </ItemGroup>
+
 </Project>
