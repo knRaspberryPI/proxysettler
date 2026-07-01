@@ -12,6 +12,7 @@
     <ApplicationUseCompatibleTextRendering>false</ApplicationUseCompatibleTextRendering>
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
     <InvariantGlobalization>true</InvariantGlobalization>
+    <ApplicationIcon>Assets\ProxySettler.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>

@@ -34,6 +34,7 @@ public class MainForm : Form
         BackColor = Color.White;
         ForeColor = TextColor;
         Font = new Font("Segoe UI", 9.5f);
+        Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath) ?? Icon;
 
         var lblProxyCaption = new Label { Text = "PROXY ADDRESS", Left = 24, Top = 24, Width = 220, ForeColor = SubtleColor, Font = new Font("Segoe UI", 8f) };
         _txtProxy = new TextBox { Left = 24, Top = 44, Width = 220, Font = new Font("Segoe UI", 10f), PlaceholderText = "e.g. 127.0.0.1" };
