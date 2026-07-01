@@ -1,0 +1,47 @@
+name: Build Windows EXE
+
+on:
+  push:
+    paths:
+      - "ProxySettler/**"
+      - ".github/workflows/build-windows-exe.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish self-contained EXE
+        run: >
+          dotnet publish ProxySettler/ProxySettler.csproj
+          -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o publish
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProxySettler-win-x64
+          path: publish/ProxySettler.exe
+
+      - name: Publish/update "latest build" release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: latest-build
+          name: "ProxySettler (latest build)"
+          body: "Automatically built from commit ${{ github.sha }}."
+          artifacts: publish/ProxySettler.exe
+          allowUpdates: true
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
